@@ -49,11 +49,12 @@ def make_dense(in_dim, out_dim, weight_init_fn):
         Analytic dx/dW/db must match numerical_gradient via gradient_check.
     """
     W, b = weight_init_fn(in_dim, out_dim)
+    params = {"W": W, "b": b}
 
     return {
-      'params': {'W': W, 'b': b},
-      'forward': lambda x: (x @ W + b, x),
-      'backward': lambda dout, cache: (dout @ W.T, {'W': cache.T @ dout, 'b': np.sum(dout, axis=0)})
+      'params': params,
+      'forward': lambda x: (x @ params['W'] + params['b'], x),
+      'backward': lambda dout, cache: (dout @ params['W'].T, {'W': cache.T @ dout, 'b': np.sum(dout, axis=0)})
     }
 
 # Step 4 - make_activation (not yet solved)
