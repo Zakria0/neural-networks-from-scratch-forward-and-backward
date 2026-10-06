@@ -57,8 +57,31 @@ def make_dense(in_dim, out_dim, weight_init_fn):
       'backward': lambda dout, cache: (dout @ params['W'].T, {'W': cache.T @ dout, 'b': np.sum(dout, axis=0)})
     }
 
-# Step 4 - make_activation (not yet solved)
-# TODO: implement
+# Step 4 - make_activation
+def make_activation(kind='relu'):
+    """Create a genuinely nonlinear elementwise activation layer.
+
+    Args:
+        kind: str nonlinearity name. Default 'relu' must implement ReLU
+              (zero negatives, pass non-negatives). Other kinds optional.
+
+    Returns:
+        Layer dict with:
+          forward(x) -> (y, cache)
+            x, y: np.ndarray shape (batch, dim)
+          backward(dout, cache) -> (dx, {})
+            dout, dx: np.ndarray shape (batch, dim)
+            param grad dict is always empty (no learnable params)
+
+    Must be elementwise and non-affine; analytic dx must match
+    numerical_gradient / gradient_check.
+    """
+    if kind == 'relu':
+      return {
+        'params': {},
+        'forward': lambda x: (np.maximum(x, 0), (x > 0)),
+        'backward': lambda dout, cache: (dout * cache, {})
+      }
 
 # Step 5 - initialize_weights (not yet solved)
 # TODO: implement
